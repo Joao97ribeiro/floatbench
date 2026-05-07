@@ -1,0 +1,10 @@
+data/
+*.csv
+*.parquet
+
+outputs/
+
+__pycache__/
+*.pyc
+*.egg-info/
+.ipynb_checkpoints/
