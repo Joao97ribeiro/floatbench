@@ -96,7 +96,7 @@ def plot_figure(summaries, out_path):
     for tower in TOWERS:
         df = summaries[tower]
         color = TOWER_COLORS[tower]
-        ax_d.plot(df["diameter_m"], df["height_m"],
+        ax_d.step(df["diameter_m"], df["height_m"], where="mid",
                   color=color, linewidth=1.5, label=tower.upper())
         ax_t.step(df["thickness_m"] * 1000.0, df["height_m"], where="mid",
                   color=color, linewidth=1.5, label=tower.upper())
