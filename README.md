@@ -33,10 +33,73 @@ cd floatbench
 pip install -r requirements.txt
 ```
 
-## Get the data
+## Dataset
 
-The released CSVs sit on Hugging Face. Either download them under
-`data/` or load them directly from Python:
+FLOATBench captures fatigue damage along the towers of three 22 MW
+floating offshore wind turbines (FOWTs). Each tower is the IEA-22-MW
+reference platform with a redesigned tower:
+
+- `ref` — IEA-22-MW reference tower (baseline)
+- `opt1` — first redesign iterate (relaxed damage budget, $D \le 1.0$)
+- `opt2` — final iterate ($D \approx 0.9$, targeting $D \le 0.9$)
+
+For every tower we run 1,078 OpenFAST aero-servo-elastic simulations
+(1,440 s each, with 6 turbulence seeds per setpoint), then post-process
+damage-equivalent loads (DEL) and Palmgren–Miner damage at each of 30
+tower sections. The result is a tabular dataset where every row is one
+section under one operating condition.
+
+![Tower geometry and lifetime damage](docs/figures/figure_geom_damage.png)
+
+### At a glance
+
+| | per tower | total (3 towers) |
+| --- | ---: | ---: |
+| Simulations (cases) | 1,078 | 3,234 |
+| Sections | 30 | 30 |
+| Rows | 194,040 | 582,120 |
+| Train rows (regime-aware split) | 51,840 (26.7%) | 155,520 |
+| Test rows | 142,200 (73.3%) | 426,600 |
+| Wind speeds | 21 setpoints, 4–25 m/s | — |
+| Sea states ($H_s$, $T_p$) | 56 unique pairs | — |
+| Turbulence seeds | 6 per setpoint | — |
+| OpenFAST run length | 1,440 s | — |
+
+### Files per tower (`data/{ref,opt1,opt2}/`)
+
+| File | Rows | Purpose |
+| --- | ---: | --- |
+| `train_damage.csv` | 51,840 | training fold (regime-aware split) |
+| `test_damage.csv` | 142,200 | test fold with `wind_group` / `wave_group` regime labels |
+| `data.csv` | 194,040 | full table (train + test) with `is_train` flag |
+| `metadata.json` | — | counts, split mode, schema version |
+
+### Schema (key columns)
+
+| Column | Unit | Description |
+| --- | --- | --- |
+| `sim_id` | — | unique simulation case id |
+| `wind_speed` | m/s | nominal hub-height wind speed |
+| `mean_wind_speed` | m/s | realized mean wind over the 1,440 s window |
+| `std_wind_speed` | m/s | realized turbulence intensity |
+| `wave_hs` | m | significant wave height |
+| `wave_tp` | s | spectral peak period |
+| `wind_seed_id` | — | turbulence seed (1–6) |
+| `section_id` | — | tower section (1–30, base to top) |
+| `section_height_m`, `section_radius_m`, `section_thickness_m` | m | section geometry |
+| `damage` | — | Palmgren–Miner damage at the section |
+| `damage_weight` | — | weight to recover lifetime damage via $\sum w_i D_i$ |
+| `wind_group`, `wave_group` | — | regime label: `In-train`, `Interpolate`, `Extrapolate` (test only) |
+
+### Wind / wave regimes
+
+The test fold partitions across an alpha-shape envelope of the training
+operating-condition cloud, populating all nine cells of the
+`In-train × Interpolate × Extrapolate` (wind × wave) grid:
+
+![Regime partition](docs/figures/regime_partition.png)
+
+### Download
 
 ```bash
 # Option A: download with the HF CLI (one-time)
@@ -48,7 +111,7 @@ python -c "from datasets import load_dataset; \
 ```
 
 After this you should have `data/{ref,opt1,opt2}/{train_damage.csv,
-test_damage.csv,data.csv,metadata.json}`.
+test_damage.csv, data.csv, metadata.json}`.
 
 ## Quickstart
 
@@ -93,12 +156,6 @@ python scripts/benchmark/run.py --flagfile=scripts/benchmark/config.cfg
 
 ## Reproducing the regime-aware split
 
-The benchmark stratifies test points by their distance to the training
-envelope (alpha-shape over the joint wind/wave grid), populating all
-nine cells of the in-train / interpolate / extrapolate × wind/wave grid:
-
-![Regime partition](docs/figures/regime_partition.png)
-
 The release ships pre-split CSVs, but the alpha-shape regime-aware
 partition can be re-derived from `data.csv`:
 
@@ -139,9 +196,9 @@ collapses to 0.423 — a 4–6× degradation:
 
 ## Reproducing paper figures
 
-`examples/figure_geom_damage.py` reproduces Figure 4 of the paper
-(tower outer diameter, wall thickness, and FLOATBench lifetime weighted
-damage along the tower height) directly from the released CSVs:
+`examples/figure_geom_damage.py` reproduces the tower geometry +
+damage profile figure shown in the [Dataset](#dataset) section above,
+directly from the released CSVs:
 
 ```bash
 # from the local copy (after huggingface-cli download)
@@ -150,8 +207,6 @@ python examples/figure_geom_damage.py
 # or stream the dataset from Hugging Face on the fly
 python examples/figure_geom_damage.py --hf=True
 ```
-
-![Tower geometry and lifetime damage](docs/figures/figure_geom_damage.png)
 
 ## License
 
