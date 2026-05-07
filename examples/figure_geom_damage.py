@@ -20,6 +20,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from absl import app, flags, logging
 
+from floatbench.colors import COLORS_DICT
+
 FLAGS = flags.FLAGS
 
 flags.DEFINE_string("data_root", "data",
@@ -32,9 +34,9 @@ flags.DEFINE_string("output", "figure_geom_damage.png",
 
 TOWERS = ("ref", "opt1", "opt2")
 TOWER_COLORS = {
-    "ref": "#dc3545",  # red
-    "opt1": "#198754",  # green
-    "opt2": "#0d6efd",  # blue
+    "ref": COLORS_DICT["dark_blue_paper"],
+    "opt1": COLORS_DICT["red_paper"],
+    "opt2": COLORS_DICT["brown_paper"],
 }
 
 
@@ -80,19 +82,33 @@ def plot_figure(summaries, out_path):
         ("thickness_m", "Wall thickness (m)"),
         ("lifetime_damage", "Lifetime weighted damage"),
     )
+    grid_color = COLORS_DICT["light_gray_paper"]
+    spine_color = COLORS_DICT["dark_gray_paper"]
     for ax, (col, xlabel) in zip(axes, panels):
         for tower, df in summaries.items():
-            ax.plot(df[col], df["height_m"], color=TOWER_COLORS[tower],
-                    lw=2, label=tower.upper())
-        ax.set_xlabel(xlabel)
-        ax.grid(True, alpha=0.3)
+            ax.plot(df[col],
+                    df["height_m"],
+                    color=TOWER_COLORS[tower],
+                    lw=2.0,
+                    label=tower.upper())
+        ax.set_xlabel(xlabel, fontsize=11)
+        ax.grid(True, color=grid_color, linewidth=0.6, alpha=0.8)
+        ax.set_axisbelow(True)
+        for side in ("top", "right"):
+            ax.spines[side].set_visible(False)
+        for side in ("left", "bottom"):
+            ax.spines[side].set_color(spine_color)
+            ax.spines[side].set_linewidth(0.8)
+        ax.tick_params(colors=spine_color, labelsize=10)
     axes[2].set_xscale("log")
-    axes[0].set_ylabel("Tower height (m)")
-    axes[0].legend(loc="best", frameon=False)
-    fig.suptitle("Tower geometry and FLOATBench lifetime damage",
-                 fontsize=12)
+    axes[0].set_ylabel("Tower height (m)", fontsize=11)
+    axes[0].legend(loc="best",
+                   frameon=False,
+                   fontsize=11,
+                   labelcolor=spine_color)
     fig.tight_layout()
-    fig.savefig(out_path, dpi=150, bbox_inches="tight")
+    fig.savefig(out_path, dpi=180, bbox_inches="tight",
+                facecolor="none", transparent=True)
     logging.info("Figure saved to %s", out_path)
 
 
