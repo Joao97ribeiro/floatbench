@@ -22,7 +22,7 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import r2_score
 
-from src import colors as colors_mod
+from floatbench import colors as colors_mod
 from floatbench import plots
 from floatbench.utils import (bootstrap_regression_metrics, resolve_group_order)
 
