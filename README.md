@@ -27,9 +27,26 @@ requirements.txt   Pinned runtime dependencies (Python 3.11)
 
 ## Install
 
+**Recommended (conda, GPU):**
+
 ```bash
 git clone https://github.com/Joao97ribeiro/FLOATBench
 cd FLOATBench
+conda env create -f environment.yml
+conda activate floatbench
+```
+
+This installs Python 3.12, PyTorch 2.6+ with CUDA 12.4, and all
+AutoGluon backends (LightGBM, CatBoost, XGBoost, FastAI, TabM,
+TabPFN, Mitra) plus the splitter / plot helpers from
+`requirements.txt`.
+
+**Alternative (pip, CPU or existing venv):**
+
+```bash
+git clone https://github.com/Joao97ribeiro/FLOATBench
+cd FLOATBench
+pip install torch  # any torch>=2.6,<2.10
 pip install -r requirements.txt
 ```
 
