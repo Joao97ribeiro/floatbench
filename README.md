@@ -154,16 +154,21 @@ python scripts/leaderboard/run.py --flagfile=scripts/leaderboard/config.cfg
 python scripts/benchmark/run.py --flagfile=scripts/benchmark/config.cfg
 ```
 
-## Reproducing the regime-aware split
+## Custom splits (alternative training envelopes)
 
-The release ships pre-split CSVs, but the alpha-shape regime-aware
-partition can be re-derived from `data.csv`:
+The release ships pre-split CSVs that match the paper Table F.1
+training set. The same splitter, however, lets you build **alternative
+training envelopes** for ablations: change which wind setpoints, wave
+pairs or seeds are used for training, or move the boundary between
+`Interpolate` and `Extrapolate` regimes:
 
 ```python
 import pandas as pd
 from floatbench.split import split_train_test, split_test_groups
 
 data = pd.read_csv("data/ref/data.csv")
+
+# Paper split (matches released wind_group / wave_group exactly):
 df_train, df_test = split_train_test(
     data, combinations_wind=-1, combinations_waves=4, combinations_seed=6,
 )
@@ -172,10 +177,23 @@ test_with_regimes = split_test_groups(
     interp_names=["In-train", "Interpolate"], interp_edges=[0.5],
     extrap_names=["Extrapolate"],
 )
+
+# A denser training envelope (8 wave pairs instead of 4):
+df_train2, df_test2 = split_train_test(
+    data, combinations_wind=-1, combinations_waves=8, combinations_seed=6,
+)
+
+# Stricter boundary between Interpolate and Extrapolate (alpha = 0.25):
+test_strict = split_test_groups(
+    df_train, df_test,
+    interp_names=["In-train", "Interpolate"], interp_edges=[0.25],
+    extrap_names=["Extrapolate"],
+)
 ```
 
-The output matches the released `wind_group` and `wave_group` columns
-exactly (verified end-to-end on the `ref` tower).
+This is what we used to run the sensitivity studies in the appendix; it
+also lets reviewers construct their own train/test splits without
+re-simulating any OpenFAST cases.
 
 ## Headline findings
 
