@@ -113,14 +113,22 @@ test_with_regimes = split_test_groups(
 The output matches the released `wind_group` and `wave_group` columns
 exactly (verified end-to-end on the `ref` tower).
 
-## Headline finding: the global rank-1 fails at the boundary
+## Headline findings
 
-On every tower, the AutoGluon default ensemble (`WeightedEnsemble_L2`)
-ranks first globally yet is overtaken at the worst-case wind-and-wave
-extrapolation cell (EX_EX) by a neural-network family the greedy
-selector systematically excludes:
+**Within-tower (E2): the global rank-1 fails at the boundary.** On every
+tower, the AutoGluon default ensemble (`WeightedEnsemble_L2`) ranks first
+globally yet is overtaken at the worst-case wind-and-wave extrapolation
+cell (EX_EX) by a neural-network family the greedy selector systematically
+excludes:
 
 ![Global vs EX_EX cross-over](docs/figures/crossover.png)
+
+**Cross-tower (E3): transfer is asymmetric.** Training on a set that
+includes the baseline `ref` generalises well to the perturbed geometries
+(rank-1 Rel L² DEL of 0.067 / 0.098). Training without `ref`, however,
+collapses to 0.423 — a 4–6× degradation:
+
+![Cross-tower transfer](docs/figures/cross_tower.png)
 
 ## Reproducing paper figures
 
