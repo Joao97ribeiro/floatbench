@@ -142,13 +142,13 @@ Francisco Pimenta, Sérgio M. O. Tavares, Faez Ahmed.
 ## Citation
 
 ```
-@inproceedings{floatbench2026,
+@misc{floatbench2026,
   title  = {FLOATBench: A Dataset and Benchmark for Floating Offshore
             Wind Turbine Tower Fatigue},
   author = {Alves Ribeiro, Jo\~ao and Alves Ribeiro, Bruno and
             Pimenta, Francisco and Tavares, S\'ergio M.\,O. and
             Ahmed, Faez},
-  booktitle = {NeurIPS 2026 Datasets and Benchmarks Track},
-  year   = {2026}
+  year   = {2026},
+  note   = {Under review at NeurIPS 2026 Datasets and Benchmarks Track}
 }
 ```
