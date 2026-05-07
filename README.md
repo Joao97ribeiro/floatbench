@@ -28,8 +28,8 @@ requirements.txt   Pinned runtime dependencies (Python 3.11)
 ## Install
 
 ```bash
-git clone https://github.com/DeCoDELab/floatbench
-cd floatbench
+git clone https://github.com/Joao97ribeiro/FLOATBench
+cd FLOATBench
 pip install -r requirements.txt
 ```
 
