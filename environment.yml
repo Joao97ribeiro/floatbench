@@ -1,12 +1,10 @@
 name: floatbench
 channels:
-  - pytorch
-  - nvidia
   - conda-forge
 dependencies:
   - python=3.12
   - pip
-  - pytorch>=2.6,<2.10
-  - pytorch-cuda=12.4
   - pip:
+      - --extra-index-url https://download.pytorch.org/whl/cu128
+      - torch>=2.6,<2.10
       - -r requirements.txt
