@@ -1,8 +1,12 @@
-# FLOATBench
+<p align="center">
+  <img src="docs/figures/logo.png" alt="FLOATBench" width="500"/>
+</p>
 
-Benchmark code for **FLOATBench: Wind Turbine Tower Damage**, a tabular
-fatigue benchmark for 22 MW floating offshore wind turbine (FOWT) towers.
-The dataset is hosted separately on Hugging Face:
+# FLOATBench: A Dataset and Benchmark for Floating Offshore Wind Turbine Tower Fatigue
+
+Benchmark code for the FLOATBench tabular fatigue benchmark on three 22 MW
+floating offshore wind turbine (FOWT) towers. The dataset is hosted
+separately on Hugging Face:
 [`DeCoDELab/FLOATBench`](https://huggingface.co/datasets/DeCoDELab/FLOATBench).
 
 ![FLOATBench overview](docs/figures/overview.png)
