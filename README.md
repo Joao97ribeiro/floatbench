@@ -59,11 +59,18 @@ python scripts/run_benchmark.py --experiment=within --tower=ref \
 
 # Full reproduction of the paper, all 6 experiments (E2 + E3, ~48 GPU-hours)
 python scripts/run_benchmark.py --experiment=all
+
+# Custom training budget (e.g. 8 h per training instead of the 4 h default)
+python scripts/run_benchmark.py --experiment=all --time_limit=28800
 ```
 
-Outputs land in `outputs/within/{ref,opt1,opt2}/` and
-`outputs/cross/{ref,opt1,opt2}/`, each containing trained models,
-leaderboards with bootstrap CIs, and a cross-preset benchmark folder.
+`--time_limit` controls the AutoGluon training budget (in seconds) per
+preset and per experiment. Default is `14400` (4 h, paper setting). Use a
+small value (e.g. `120`) for a quick smoke test, or a larger value to
+push beyond the paper budget. Outputs land in
+`outputs/within/{ref,opt1,opt2}/` and `outputs/cross/{ref,opt1,opt2}/`,
+each containing trained models, leaderboards with bootstrap CIs, and a
+cross-preset benchmark folder.
 
 ### Stages individually
 
