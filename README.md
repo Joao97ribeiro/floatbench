@@ -132,9 +132,19 @@ collapses to 0.423 — a 4–6× degradation:
 
 ## Reproducing paper figures
 
+`examples/figure_geom_damage.py` reproduces Figure 4 of the paper
+(tower outer diameter, wall thickness, and FLOATBench lifetime weighted
+damage along the tower height) directly from the released CSVs:
+
 ```bash
+# from the local copy (after huggingface-cli download)
 python examples/figure_geom_damage.py
+
+# or stream the dataset from Hugging Face on the fly
+python examples/figure_geom_damage.py --hf=True
 ```
+
+![Tower geometry and lifetime damage](docs/figures/figure_geom_damage.png)
 
 ## License
 
